@@ -1,0 +1,277 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Theatre Booking API",
+    "description": "API collection for the Theatre Seat Booking application (CN6035)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.accessToken)  pm.collectionVariables.set('access_token',  json.accessToken);",
+                  "if (json.refreshToken) pm.collectionVariables.set('refresh_token', json.refreshToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Theatres",
+      "item": [
+        {
+          "name": "Get All Theatres",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/theatres",
+              "host": ["{{base_url}}"],
+              "path": ["api", "theatres"]
+            }
+          }
+        },
+        {
+          "name": "Get Theatre by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/theatres/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "theatres", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shows",
+      "item": [
+        {
+          "name": "Get All Shows",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/shows",
+              "host": ["{{base_url}}"],
+              "path": ["api", "shows"]
+            }
+          }
+        },
+        {
+          "name": "Get Show by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/shows/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "shows", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showId\": 1,\n  \"seats\": [\"A1\", \"A2\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reservations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reservations"]
+            }
+          }
+        },
+        {
+          "name": "Get Reservation by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/reservations/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reservations", "1"]
+            }
+          }
+        },
+        {
+          "name": "Modify Reservation",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seats\": [\"B1\", \"B2\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reservations/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reservations", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Reservation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/reservations/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reservations", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get My Reservations",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/user/reservations",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "reservations"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

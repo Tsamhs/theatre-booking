@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Theatre Booking",
+    "slug": "theatre-booking",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.theatre.booking",
+      "adaptiveIcon": {
+        "backgroundColor": "#1B2A4A"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.theatre.booking",
+      "supportsTablet": false
+    }
+  }
+}
