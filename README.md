@@ -1,148 +1,134 @@
-● Οδηγίες Εγκατάστασης
+# 🎭 CineBook / Theatre Booking Mobile Application
 
-  ---
-  Προαπαιτούμενα
+A full-stack, cross-platform mobile application designed for real-time movie & theatre seat reservations, featuring secure authentication and robust seat concurrency management.
 
-  ┌───────────┬─────────────┬───────────────────┐
-  │ Λογισμικό │   Έκδοση    │       Λήψη        │
-  ├───────────┼─────────────┼───────────────────┤
-  │ Node.js   │ 18+         │ nodejs.org        │
-  ├───────────┼─────────────┼───────────────────┤
-  │ MariaDB   │ 10.6+       │ mariadb.org       │
-  ├───────────┼─────────────┼───────────────────┤
-  │ HeidiSQL  │ οποιαδήποτε │ heidisql.com      │
-  ├───────────┼─────────────┼───────────────────┤
-  │ Expo CLI  │ latest      │ npm i -g expo-cli │
-  └───────────┴─────────────┴───────────────────┘
+---
 
-  ---
-  Βήμα 1 — Βάση Δεδομένων
+## 🛠️ Tech Stack & Architecture
 
-  1. Ανοίξτε HeidiSQL και συνδεθείτε στο localhost:3306
-  2. Εκτελέστε το αρχείο schema.sql (δημιουργία πινάκων)
-  3. Εκτελέστε το αρχείο seed.sql (εισαγωγή δεδομένων)
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | React Native + Expo |
+| **Backend** | Node.js + Express.js |
+| **Database** | MariaDB |
+| **Authentication** | JWT (Access & Refresh Tokens) + bcrypt |
+| **HTTP Client** | Axios (with custom interceptors) |
+| **Token Storage** | `expo-secure-store` / `localStorage` |
 
-  ---
-  Βήμα 2 — Backend
+---
 
-  cd theatre-booking/backend
-  npm install
+## 🌟 Key Features
 
-  Δημιουργήστε αρχείο .env:
-  PORT=3000
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_USER=root
-  DB_PASSWORD=1234
-  DB_NAME=theatre_booking
-  JWT_SECRET=my_super_secret_key_12345
-  JWT_EXPIRES_IN=1h
-  JWT_REFRESH_EXPIRES_IN=7d
+### 🔐 Authentication & Security
+- User registration with **bcrypt** password hashing.
+- **JWT-based authentication** with short-lived Access Tokens (1 hour).
+- Automatic token renewal mechanism via **Refresh Tokens** (7 days).
+- Secure logout with server-side token revocation.
 
-  Εκκίνηση:
-  npm run dev
-  ✅ Επιβεβαίωση: Server listening on http://localhost:3000
+### 🎬 Movie & Show Exploration
+- Interactive homepage with featured titles carousel.
+- Real-time search and detailed view (duration, category, plot, posters).
+- 14-day booking calendar with per-day showtime selection.
+- Screen room details (DOLBY, IMAX, etc.).
 
-  ---
-  Βήμα 3 — Frontend
+### 🎫 Seat Reservation & Concurrency Handling
+- Tiered ticket pricing (Adult €9.50 / Student €7.00 / Child €6.00).
+- Interactive visual seat map.
+- **Row-level locking database architecture** to prevent race conditions and double bookings.
+- Dynamic sold-out status updates.
 
-  cd theatre-booking/frontend
-  npm install
-  npx expo start
+### 📋 Booking Management
+- User dashboard with full booking history.
+- Real-time status tracking (*Confirmed / Completed / Cancelled*).
+- Future reservation cancellation with automated seat release back to inventory.
 
-  Πατήστε w για εκκίνηση στον browser (http://localhost:8081)
+---
 
-  ▎ Σημείωση Android Emulator: Αλλάξτε στο frontend/src/services/api.js:
-  ▎ export const API_BASE = 'http://10.0.2.2:3000/api';
+## 📡 API Endpoints
 
-  ---
-  Βήμα 4 — Πρώτη Χρήση
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| **POST** | `/auth/register` | User registration | ❌ |
+| **POST** | `/auth/login` | User authentication | ❌ |
+| **POST** | `/auth/refresh` | Renew access token | ❌ |
+| **GET** | `/theatres` | List available cinemas | ❌ |
+| **GET** | `/shows` | Fetch movies list | ❌ |
+| **GET** | `/shows/:id` | Get movie details & showtimes | ❌ |
+| **POST** | `/reservations` | Create new seat booking | ✅ |
+| **GET** | `/user/reservations` | Fetch user reservation history | ✅ |
+| **DELETE** | `/reservations/:id` | Cancel active reservation | ✅ |
 
-  1. Ανοίξτε http://localhost:8081
-  2. Επιλέξτε Εγγραφή → συμπληρώστε στοιχεία
-  3. Κάντε Σύνδεση με τα στοιχεία που δημιουργήσατε
+---
 
-  ------
-  Περιγραφή Λειτουργικότητας
+## 🚀 Installation & Setup Guide
 
-  ---
-  Επισκόπηση
+### Prerequisites
+- **Node.js**: `v18+`
+- **MariaDB**: `v10.6+`
+- **HeidiSQL / DBeaver**: Database client
+- **Expo CLI**: `npm install -g expo-cli`
 
-  Η εφαρμογή CineBook είναι ένα σύστημα κράτησης εισιτηρίων κινηματογράφου. Επιτρέπει στους χρήστες να αναζητούν
-  ταινίες, να επιλέγουν προβολές και να κάνουν κρατήσεις εισιτηρίων σε πραγματικό χρόνο.
+---
 
-  ---
-  Λειτουργίες Χρήστη
+### 1. Database Setup
+1. Open your database client and connect to `localhost:3306`.
+2. Execute `schema.sql` to generate tables.
+3. Execute `seed.sql` to populate initial data.
 
-  🔐 Αυθεντικοποίηση
-  - Εγγραφή με email/password (κρυπτογράφηση bcrypt)
-  - Σύνδεση με έκδοση JWT token (1 ώρα)
-  - Αυτόματη ανανέωση token με Refresh Token (7 ημέρες)
-  - Αποσύνδεση με ακύρωση token από βάση
+---
 
-  🎬 Αναζήτηση Ταινιών
-  - Κεντρική οθόνη με featured ταινίες (carousel)
-  - Λίστα όλων των ταινιών με αναζήτηση
-  - Λεπτομέρειες ταινίας (διάρκεια, κατηγορία, περιγραφή)
-  - Εμφάνιση poster εικόνας ανά ταινία
+### 2. Backend Installation
 
-  📅 Επιλογή Προβολής
-  - Ημερολόγιο 14 ημερών με διαθέσιμες ημερομηνίες
-  - Ωράρια προβολής ανά ημέρα
-  - Ένδειξη διαθέσιμων θέσεων σε πραγματικό χρόνο
-  - Εμφάνιση αίθουσας (DOLBY/IMAX κ.ά.)
+```bash
+cd theatre-booking/backend
+npm install
 
-  🎫 Κράτηση Εισιτηρίων
-  - Επιλογή κατηγορίας (Ενήλικας €9.50 / Φοιτητής €7.00 / Παιδί €6.00)
-  - Οπτική αναπαράσταση χάρτη θέσεων
-  - Έλεγχος διαθεσιμότητας με row-level locking (αποφυγή double booking)
-  - Αυτόματη ανανέωση sold-out status
+```
 
-  📋 Ιστορικό Κρατήσεων
-  - Λίστα όλων των κρατήσεων του χρήστη
-  - Status: Επιβεβαιωμένη / Ολοκληρώθηκε / Ακυρώθηκε
-  - Ακύρωση μελλοντικών κρατήσεων με επιστροφή θέσεων
+Create a `.env` file in the `backend` folder:
 
-  ---
-  Τεχνική Αρχιτεκτονική
+```env
+PORT=3000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=1234
+DB_NAME=theatre_booking
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRES_IN=1h
+JWT_REFRESH_EXPIRES_IN=7d
 
-  ┌──────────────────┬──────────────────────────────────┐
-  │     Επίπεδο      │            Τεχνολογία            │
-  ├──────────────────┼──────────────────────────────────┤
-  │ Frontend         │ React Native + Expo              │
-  ├──────────────────┼──────────────────────────────────┤
-  │ Backend          │ Node.js + Express                │
-  ├──────────────────┼──────────────────────────────────┤
-  │ Βάση Δεδομένων   │ MariaDB                          │
-  ├──────────────────┼──────────────────────────────────┤
-  │ Αυθεντικοποίηση  │ JWT + bcrypt                     │
-  ├──────────────────┼──────────────────────────────────┤
-  │ HTTP Client      │ Axios (με interceptors)          │
-  ├──────────────────┼──────────────────────────────────┤
-  │ Αποθήκευση Token │ expo-secure-store / localStorage │
-  └──────────────────┴──────────────────────────────────┘
+```
 
-  ---
-  API Endpoints
+Start the server:
 
-  ┌────────┬────────────────────┬──────────────────────┬──────┐
-  │ Method │      Endpoint      │      Περιγραφή       │ Auth │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ POST   │ /auth/register     │ Εγγραφή χρήστη       │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ POST   │ /auth/login        │ Σύνδεση              │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ POST   │ /auth/refresh      │ Ανανέωση token       │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ GET    │ /theatres          │ Λίστα κινηματογράφων │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ GET    │ /shows             │ Λίστα ταινιών        │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ GET    │ /shows/:id         │ Λεπτομέρειες ταινίας │ X   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ POST   │ /reservations      │ Δημιουργία κράτησης  │ NAI   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ GET    │ /user/reservations │ Κρατήσεις χρήστη     │ NAI   │
-  ├────────┼────────────────────┼──────────────────────┼──────┤
-  │ DELETE │ /reservations/:id  │ Ακύρωση κράτησης     │ NAI   │
-  └────────┴────────────────────┴──────────────────────┴──────┘
+```bash
+npm run dev
+# ✅ Server running on http://localhost:3000
+
+```
+
+---
+
+### 3. Frontend Installation
+
+```bash
+cd theatre-booking/frontend
+npm install
+npx expo start
+
+```
+
+Press `w` to launch the app in your browser (`http://localhost:8081`).
+
+> 💡 **Android Emulator Note:** If running on Android Studio, update `frontend/src/services/api.js`:
+> ```javascript
+> export const API_BASE = '[http://10.0.2.2:3000/api](http://10.0.2.2:3000/api)';
+> 
+> ```
+> 
+> 
+
+```
+
+```
